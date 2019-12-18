@@ -12,9 +12,7 @@ export default {
     methods: {
         getConversations: function () {
             
-            var idUser = this.$route.fullPath
-
-            console.log('DDDDDDDDDDDDD ' + idUser)    
+            var idUser = this.$route.fullPath 
 
             this.loading = true;
             this.conversations = []
