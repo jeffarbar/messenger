@@ -3,6 +3,8 @@ import Message from './Message';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
 
+import data from "@zaichaopan/emoji-picker/data/emojis.json";
+
 
 export default {
     components: {
@@ -21,11 +23,11 @@ export default {
     },
     data () {
         return {
-    
             loading: false,
             conversation: {},
             messages: [],
-            message: ''
+            message: '',
+            data: data
         }
     },
     computed: {
@@ -34,7 +36,7 @@ export default {
         },
         messagesGroupedByDate() {
             return this._groupMessagesByDate(this.messages.reverse());
-        }
+        } 
     },
     watch: {
         peer (peer_id) {
@@ -47,6 +49,7 @@ export default {
         }
     },
     mounted() {
+        this.focusEditor();
         setInterval(
             () => {
                 this.getHistory()
@@ -58,7 +61,33 @@ export default {
         this.$refs.historyView.scrollTop = this.$refs.historyView.scrollHeight;
     },
     methods: {
-
+        
+        getNome(){
+            let url = this.$route.fullPath;
+            if( url != null && url.indexOf('nome=') > -1 ){
+                return url.split('nome=')[1].replace(/%20/g, ' ');
+            } 
+            return ''
+        } ,
+        filters(str){ 
+            return String(str).replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br>$2').replace(/&nbsp;/g, ' ');
+        },
+        updateBody(text) {
+            this.message = this.filters(text);
+        },
+        handleEmojiPicked(emoji) {
+            this.$refs.textarea.innerHTML = `${
+                this.$refs.textarea.innerHTML
+            } ${emoji}`;
+            this.updateBody(this.$refs.textarea.innerHTML);
+            this.focusEditor();
+        },
+        handleEditorClick() {
+            this.focusEditor();
+        },
+        focusEditor() {          
+            this.$refs.textarea.focus();
+        },
         getHistory: function(peer_id) {
             this.loading = true;
             this.messages = [];
@@ -69,22 +98,7 @@ export default {
 
             this.$http.get('http://13.90.142.231:8072/send/mensagem/'+peer_id)
             .then(response => {
-                /*
-                if (typeof response.body.response.profiles !== 'undefined') {
-                    response.body.response.profiles.map(user => {
-                        this.$store.commit('addUser', user);
-                    });
-                }
-
-                if (typeof response.body.response.groups !== 'undefined') {
-                    response.body.response.groups.map(group => {
-                        this.$store.commit('addGroup', group);
-                    });
-                }
-                */
                 this.messages = response.body;
-                //this.conversation = this.messages[0];
-
                 this.loading = false;
             });
         },
@@ -92,14 +106,13 @@ export default {
           
             if( this.message != null  && this.message != ''){
                 
-                this.loading = true;
                 var mensagem = {"idMonitoredPont":this.peer,"content": this.message , 'direction':'0'}
                 this.$http.post(
                     'http://13.90.142.231:8072/send/mensagem/', mensagem 
                     
                 ).then(response => {
-                    this.loading = false;
                     this.message = '';
+                    this.$refs.textarea.innerHTML = '';
                     
                     this.getHistory(this.peer);
                 });
@@ -116,8 +129,8 @@ export default {
 
 <template>
     <div class="dialog-info">
-        <div class="conversation-header" v-if="peer !== 0">
-            <div class="conversation__name">{{peer}}</div>
+        <div class="conversation-header">
+            <div class="conversation__name">{{this.getNome()}}</div>
         </div>
 
         <div class="im-history" ref="historyView">
@@ -143,10 +156,26 @@ export default {
         </div>
 
         <!-- <message-form :peer="peer" v-if="peer !== 0"/> -->
-        <div v-if="peer !== 0" class="im-send-form">
-            <textarea v-model="message" name="message" class="im-send-form__textarea" placeholder="Escreva uma mensagem ..."></textarea>
-            <button class="im-send-form__submit-button" v-on:click="send"></button>
-        </div>
+        <!-- <div v-if="peer !== 0" class="im-send-form"> -->
+            
+            <div class="message">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <div contenteditable="true"
+                    name="message"
+                    class="rich-editor-container im-send-form__textarea"
+                    ref="textarea"
+                    @keypress.enter.prevent="send"
+                    @input="updateBody($event.target.innerHTML)"
+                    @click="handleEditorClick"
+                    placeholder="Escreva uma mensagem ...">
+                </div>
+                <div class="message-emoji">
+                    <emoji-picker @emoji:picked="handleEmojiPicked" :data="data" />
+                </div>
+                &nbsp;&nbsp;
+                <button class="im-send-form__submit-button" v-on:click="send" ></button>
+            </div>
+        
     </div>
 
 </template>
@@ -218,22 +247,20 @@ export default {
 	border-radius: 6px;
     line-height: 17px;
 	padding: 9px 74px 10px 13px;
-	margin: 12px 0;
+	margin: 7px 0;
 	border: solid 1px #d3d9de;
 	outline: 0;
 }
 
 .im-send-form__submit-button {
     align-self: flex-end;
- 
-    background:url('./../assets/svg/envia.png') no-repeat;
-
+    background:url('./../assets/svg/send-logo.png') no-repeat;
 	background-size: 40px 40px;
 	width: auto;
     height: auto;
 	border: none;
 	outline: none;
-    padding: 25px 20px;
+    padding: 23px 23px;
     cursor: pointer;
 	opacity: 0.7;
 	animation: 0.15s linear 0s im-zoom-appear;
@@ -257,5 +284,36 @@ export default {
   stroke: #4691f6;
   stroke-width: 1;
 }
+
+
+/** emoji **/
+
+
+.message {
+  
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 7%;
+}
+
+.rich-editor-container {
+ width: 100%;
+ height: 2rem;
+ border: 1px solid #ddd;
+ border-radius: 9999px;
+ padding: 5px 40px 5px 15px;
+ line-height: 2rem;  
+}
+.message-emoji {
+ position: absolute;
+ right: 60px;
+ top: 8px;
+}
+[contenteditable="true"]:empty:before {
+ content: attr(placeholder);
+ color: grey;
+}
+
 
 </style>

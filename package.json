@@ -7,6 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@zaichaopan/emoji-picker": "^0.1.7",
     "linkifyjs": "^2.1.6",
     "moment": "^2.18.1",
     "vue": "^2.5.17",

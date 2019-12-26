@@ -11,13 +11,31 @@ export default {
 </script>
 
 <template>
-    <div class="im-container">
-        <conversations></conversations>
-        <conversation></conversation>
+    <div class="context_" >
+        <div class="im-container">
+            <conversations></conversations>
+            <conversation></conversation>
+        </div>
+       
+        <div class="copyright">
+            &copy; {{ new Date().getFullYear() }}
+            powered by Send Solutions<br>
+            contato@sendsolutions.me
+        </div>
     </div>
 </template>
 
 <style>
+
+.context_{
+    flex-grow: 1;
+}
+
+.copyright{
+    text-align: center;
+    font-size: 12px;
+}
+
 .im-container {
     display: flex;
     flex-grow: 1;

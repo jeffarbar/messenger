@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import moment from 'moment';
-import 'moment/locale/ru.js';
+//import 'moment/locale/ru.js';
 import linkifyStr from 'linkifyjs/string';
 
-moment.locale('ru');
+moment.locale('pt-BR');
 
 Vue.filter('moment', function(time) {
     return moment.unix(time);

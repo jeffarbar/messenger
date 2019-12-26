@@ -1,15 +1,32 @@
 <script>
 import ConversationsItem from './ConversationsItem.vue';
-import ConversationsSearch from './ConversationsSearch.vue';
+//import ConversationsSearch from './ConversationsSearch.vue';
 
 export default {
     data () {
         return {
             conversations: [],
+            conversationsAux: [],
             loading: false,
+            query: ''
         };
     },
     methods: {
+        pesquisar: function () {
+
+            let aux = [];
+            if( this.query != null && this.query != undefined && this.query != '' ){
+                let quantidade = this.conversationsAux.length;  
+                for (var i= 0; i < quantidade; i++ ) {
+                    if( this.conversationsAux[i].nome.toUpperCase().indexOf(this.query.toUpperCase()) > -1 ){
+                         aux.push( this.conversationsAux[i] );   
+                    }
+                };
+                this.conversations = aux;
+            }else{
+                this.getConversations()
+            }
+        },
         getConversations: function () {
             
             var idUser = this.$route.fullPath 
@@ -18,9 +35,9 @@ export default {
             this.conversations = []
             this.$http.get('http://13.90.142.231:8082/rastreamento/pontoMonitorado/usuario' + idUser)
             .then(response => {
-                console.log('dddddadaaaaaa')
                 this.loading = false;
                 this.conversations = response.body;
+                this.conversationsAux =  this.conversations
             });
 
             /*
@@ -85,8 +102,8 @@ export default {
         */
     },
     components: {
-        ConversationsItem,
-        ConversationsSearch
+        ConversationsItem
+        //ConversationsSearch
     }
 }
 </script>
@@ -94,8 +111,15 @@ export default {
 <template>
     <aside class="conversations-page">
         <div class="conversations-header">
+             <div class="dialogs-search">
+                <input type="search" v-model="query" v-on:keyup="pesquisar" class="dialogs-search__field" placeholder="Pesquisar">
+            </div>
+            <!--
             <conversations-search></conversations-search>
+            -->
+             <!--
             <button class="menu-button"></button>
+            -->
         </div>
         
         <div v-if="loading" class="spinner"></div>
@@ -147,5 +171,23 @@ export default {
 }
 .menu-button:active {
     transform: translateY(1px);
+}
+.dialogs-search {
+    display: flex;
+    flex-grow: 1;
+}
+.dialogs-search__field {
+	flex-grow: 1;
+	flex-shrink: 0;
+	background-color: #eef1f4;
+	border: 0;
+	border-radius: 3px;
+	font-size: 14px;
+	padding: 10px;
+	margin: 10px;
+	outline: none;
+}
+.dialogs-search__field::placeholder {
+	color: #9ca2ad;
 }
 </style>

@@ -14,10 +14,15 @@ export default {
     props: ['dialog'],
     methods: {
         select: function() {
-            this.$router.push('?peer=' + this.dialog.identificador);
+            if( this.dialog.identificador != this.$store.getters.currentPeer ){
+                this.$router.push('?peer=' + this.dialog.identificador+'&nome='+this.dialog.nome);
+            }
         },
         getColor() {
             return DIALOG_COLORS[this.dialog.identificador % 8];
+        },
+        formatarData: (data) => {
+            return moment(data,'DD/MM/YYYY HH:mm:ss').format("DD MMM HH:mm");
         }
     },
     computed: {
@@ -67,14 +72,14 @@ export default {
                 <img src="./../assets/svg/profile.png" alt="">
             </div>
         </div>
-       
+ 
         <div class="dialog__content">
             <div class="dialog__name">
         
-                <template v-if="dialog.nome">{{dialog.nome}} - {{dialog.identificador}}</template>
+                <template v-if="dialog.nome">{{dialog.nome}}</template>
             </div>
-            <span class="dialog__time">{{this.dialog.dtCadastro}}</span>
-            <div class="dialog__remove-button" title="Excluir caixa de diálogo">×</div>
+            <span class="dialog__time">{{ this.formatarData( dialog.dtCadastro ) }}</span>
+            <!-- <div class="dialog__remove-button" title="Excluir caixa de diálogo">×</div> -->
             
             <div class="dialog__message">
                 <!-- <span v-if="dialog.last_message.out" class="dialog__who">Você é:</span> -->

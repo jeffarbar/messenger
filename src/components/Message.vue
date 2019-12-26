@@ -1,4 +1,5 @@
 <script>
+import moment from 'moment';
 import Attachment from './attachments/Attachment.vue';
 
 export default {
@@ -26,6 +27,9 @@ export default {
                 'http://13.90.142.231:8072/send/mensagem/ler/'+idMensagem).then(response => {
             });
         },
+        formatarData: (data) => {
+            return moment(data).format("DD MMM HH:mm");
+        }
     }
 }
 </script>
@@ -40,7 +44,7 @@ export default {
             <a href="#" @click="lida(message.id)" >
                 <div class="im-history__message__meta__recebe">
                     <template>{{message.idMonitoredPont}} </template>
-                    <span class="im-history__message__time__recebe">{{message.createdAt}}</span>
+                    <span class="im-history__message__time__recebe">{{ this.formatarData( message.createdAt ) }}</span>
                 </div>
                 <div  class="im-history__message__text__recebe" v-html="$options.filters.nl2br($options.filters.linkify(message.content))"></div>
             </a>    
@@ -58,7 +62,7 @@ export default {
             <a href="#">
                 <div class="im-history__message__meta__envia">
                     <template>{{message.idMonitoredPont}} </template>
-                    <span class="im-history__message__time__envia">{{message.createdAt}}</span>
+                    <span class="im-history__message__time__envia">{{this.formatarData( message.createdAt )}}</span>
                 </div>
                 <div  class="im-history__message__text__envia" v-html="$options.filters.nl2br($options.filters.linkify(message.content))"></div>
             </a>    

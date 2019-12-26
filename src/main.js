@@ -1,9 +1,12 @@
 import Vue from 'vue';
 import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
+import EmojiPicker from '@zaichaopan/emoji-picker';
+
 
 Vue.use(VueResource);
 Vue.use(VueRouter);
+Vue.use(EmojiPicker);
 
 import "./assets/css/normalize.min.css";
 import "./assets/css/im.css";
