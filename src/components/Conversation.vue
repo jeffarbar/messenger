@@ -108,8 +108,8 @@ export default {
                 
                 var mensagem = {"idMonitoredPont":this.peer,"content": this.message , 'direction':'0'}
                 this.$http.post(
-                    'http://13.90.142.231:8072/send/mensagem/', mensagem 
-                    
+                   // 'http://13.90.142.231:8072/send/mensagem/', mensagem 
+                   'http://18.229.126.153:8072/send/mensagem/', mensagem 
                 ).then(response => {
                     this.message = '';
                     this.$refs.textarea.innerHTML = '';

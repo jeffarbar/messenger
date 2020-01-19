@@ -33,7 +33,8 @@ export default {
 
             this.loading = true;
             this.conversations = []
-            this.$http.get('http://13.90.142.231:8082/rastreamento/pontoMonitorado/usuario' + idUser)
+            //this.$http.get('http://13.90.142.231:8082/rastreamento/pontoMonitorado/usuario' + idUser)
+            this.$http.get('http://18.229.126.153:8082/rastreamento/pontoMonitorado/usuario' + idUser)
             .then(response => {
                 this.loading = false;
                 this.conversations = response.body;

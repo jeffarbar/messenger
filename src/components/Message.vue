@@ -24,7 +24,8 @@ export default {
             console.log(idMensagem) 
 
             this.$http.get(
-                'http://13.90.142.231:8072/send/mensagem/ler/'+idMensagem).then(response => {
+                'http://18.229.126.153:8072/send/mensagem/ler/'+idMensagem).then(response => {
+                //'http://13.90.142.231:8072/send/mensagem/ler/'+idMensagem).then(response => {
             });
         },
         formatarData: (data) => {
